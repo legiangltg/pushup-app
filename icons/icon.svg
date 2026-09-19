@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E293B"/>
+      <stop offset="100%" stop-color="#090D16"/>
+    </linearGradient>
+    <linearGradient id="neonOrange" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7043"/>
+      <stop offset="100%" stop-color="#FF3D00"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <!-- Rounded App Icon Background -->
+  <rect width="512" height="512" rx="115" fill="url(#bgGrad)"/>
+  <rect x="8" y="8" width="496" height="496" rx="107" fill="none" stroke="#FF5722" stroke-opacity="0.3" stroke-width="6"/>
+  
+  <!-- Outer Energy Ring -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#FF5722" stroke-width="12" stroke-dasharray="800 200" stroke-linecap="round" filter="url(#glow)"/>
+  
+  <!-- Push-up Athletic Silhouette / Icon -->
+  <g fill="url(#neonOrange)" filter="url(#glow)">
+    <!-- Head -->
+    <circle cx="160" cy="180" r="32" />
+    
+    <!-- Torso and Body In Pushup Plank Position -->
+    <path d="M 195 195 L 390 320 C 400 326 405 340 395 350 C 385 360 370 358 360 350 L 205 240 L 195 345 C 193 355 180 365 170 360 C 160 355 160 340 165 330 L 180 220 Z" />
+    
+    <!-- Ground Line Indicator -->
+    <line x1="100" y1="400" x2="412" y2="400" stroke="#00E676" stroke-width="14" stroke-linecap="round" />
+    
+    <!-- Upward Arrow of Power -->
+    <path d="M 256 120 L 290 165 L 270 165 L 270 210 L 242 210 L 242 165 L 222 165 Z" fill="#00E676" />
+  </g>
+</svg>

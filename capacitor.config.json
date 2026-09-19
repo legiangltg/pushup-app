@@ -1,0 +1,8 @@
+{
+  "appId": "com.fitness.pushuppro",
+  "appName": "PushUp Pro",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

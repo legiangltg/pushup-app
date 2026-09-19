@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0F172A">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Ứng dụng đếm chống đẩy bằng chạm cằm/mũi và quản lý giáo án bài tập theo ngày và hiệp cho Android">
+    <title>PushUp Pro - Đếm Chống Đẩy & Giáo Án</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <link rel="apple-touch-icon" href="icons/icon.svg">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Confetti JS for victory celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <!-- App Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app-container">
+        
+        <!-- PWA Install Banner -->
+        <div id="pwa-install-banner" class="pwa-banner hidden">
+            <div class="pwa-banner-content">
+                <div class="pwa-banner-icon">📱</div>
+                <div class="pwa-banner-text">
+                    <strong>Cài đặt PushUp Pro</strong>
+                    <span>Dùng như app Android Native không cần mạng</span>
+                </div>
+            </div>
+            <button id="btn-install-pwa" class="btn-install">Cài Đặt</button>
+        </div>
+
+        <!-- ================= VIEW 1: HOME & ROUTINES ================= -->
+        <section id="view-home" class="view active">
+            <!-- App Header -->
+            <header class="app-header">
+                <div class="brand">
+                    <div class="brand-badge">PRO</div>
+                    <div>
+                        <h1 class="brand-title">PUSHUP MASTER</h1>
+                        <p class="brand-sub">Đếm Chạm Cằm • Lộ Trình Theo Set</p>
+                    </div>
+                </div>
+                <div class="header-tools">
+                    <button id="btn-open-history" class="btn-tool-outline" title="Quản lý lịch sử luyện tập">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        Lịch Sử
+                    </button>
+                    <button id="btn-free-mode" class="btn-free-mode" title="Chế độ tập tự do">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+                        Tập Tự Do
+                    </button>
+                    <a href="PushUpPro.apk" download="PushUpPro.apk" class="btn-download-apk" title="Tải file cài đặt APK cho Android">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        APK
+                    </a>
+                </div>
+
+            </header>
+
+            <!-- Quick Settings Bar -->
+            <div class="quick-settings-bar">
+                <label class="setting-toggle">
+                    <input type="checkbox" id="toggle-sound" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Âm Bíp</span>
+                </label>
+                <label class="setting-toggle">
+                    <input type="checkbox" id="toggle-vibrate" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Rung</span>
+                </label>
+                <label class="setting-toggle">
+                    <input type="checkbox" id="toggle-speech">
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Giọng Đọc</span>
+                </label>
+            </div>
+
+            <!-- Daily Goal Card (Mục tiêu 200 cái/ngày) -->
+            <div class="daily-goal-card">
+                <div class="daily-goal-header">
+                    <div class="daily-goal-left">
+                        <div class="daily-goal-title-row">
+                            <span class="daily-goal-tag">MỤC TIÊU HÔM NAY</span>
+                            <button id="btn-edit-daily-goal" class="btn-edit-goal" title="Đổi số cái mục tiêu ngày">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                <span id="daily-goal-target-text">200 cái</span>
+                            </button>
+                        </div>
+                        <div class="daily-goal-progress-text">
+                            Đã đẩy: <strong id="daily-goal-current">0</strong> / <span id="daily-goal-total">200</span> cái
+                            <span id="daily-goal-badge" class="goal-completed-badge hidden">✓ Đã Hoàn Thành!</span>
+                        </div>
+                    </div>
+                    <div class="daily-goal-percent" id="daily-goal-percent">0%</div>
+                </div>
+                <div class="daily-goal-bar-bg">
+                    <div class="daily-goal-bar-fill" id="daily-goal-bar-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💪</div>
+                    <div class="stat-value" id="stat-total-reps">0</div>
+                    <div class="stat-label">Tổng Reps</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-value" id="stat-total-calories">0</div>
+                    <div class="stat-label">Kcal Đốt</div>
+                </div>
+                <div class="stat-card clickable" id="card-stat-workouts" title="Bấm để mở cửa sổ lịch sử">
+                    <div class="stat-icon">📜</div>
+                    <div class="stat-value" id="stat-total-workouts">0</div>
+                    <div class="stat-label">Buổi Tập ➔</div>
+                </div>
+            </div>
+
+            <!-- Section: Routines List -->
+            <div class="section-container">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Giáo Án Tập Theo Ngày</h2>
+                        <p class="section-sub">Chọn ngày tập hoặc tự thêm lộ trình riêng của bạn</p>
+                    </div>
+                    <div class="routine-header-actions">
+                        <button id="btn-share-routines" class="btn-share-routines" title="Chia sẻ giáo án sang máy khác hoặc nhập giáo án mới">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                            Chia Sẻ / Nhập
+                        </button>
+                        <button id="btn-new-routine" class="btn-create-routine">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                            Thêm Ngày
+                        </button>
+                    </div>
+                </div>
+
+                <div id="routine-list" class="routine-list">
+                    <!-- Dynamic routine cards rendered here -->
+                </div>
+            </div>
+
+
+        </section>
+
+        <!-- ================= VIEW: DEDICATED WORKOUT HISTORY WINDOW ================= -->
+        <section id="view-history" class="view hidden history-view">
+            <div class="view-header">
+                <button id="btn-back-from-history" class="btn-icon" title="Quay lại màn hình chính">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <div class="view-header-center">
+                    <h2 class="view-page-title">Quản Lý Lịch Sử</h2>
+                    <span class="view-page-sub" id="history-total-count">0 buổi tập</span>
+                </div>
+                <button id="btn-clear-all-history" class="btn-pill-danger" title="Xoá tất cả lịch sử">
+                    Xoá Hết
+                </button>
+            </div>
+
+            <!-- Summary Bar inside History -->
+            <div class="history-summary-bar">
+                <div class="history-sum-card">
+                    <span class="history-sum-val" id="history-sum-reps">0</span>
+                    <span class="history-sum-lbl">Tổng Reps</span>
+                </div>
+                <div class="history-sum-card">
+                    <span class="history-sum-val" id="history-sum-calories">0</span>
+                    <span class="history-sum-lbl">Kcal Đốt</span>
+                </div>
+                <div class="history-sum-card">
+                    <span class="history-sum-val" id="history-sum-today">0</span>
+                    <span class="history-sum-lbl">Hôm Nay</span>
+                </div>
+            </div>
+
+            <div class="section-container history-page-content">
+                <div class="history-list-header">
+                    <span class="history-section-title">Danh sách buổi tập (Sửa & Xoá)</span>
+                </div>
+                <div id="history-list" class="history-list full-page">
+                    <!-- Dynamic history items rendered here with edit & delete -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= VIEW 2: ACTIVE WORKOUT TOUCH PAD ================= -->
+        <section id="view-workout" class="view hidden workout-view">
+            <!-- Top Controls -->
+            <div class="workout-header">
+                <button id="btn-exit-workout" class="btn-icon" title="Dừng tập">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                </button>
+                <div class="workout-status">
+                    <div id="set-info-badge" class="set-badge">Hiệp 1/2</div>
+                    <div id="target-display" class="target-text">Mục tiêu: 30 cái</div>
+                </div>
+                <button id="btn-finish-set-early" class="btn-pill-small" title="Hoàn thành sớm hiệp này">
+                    Xong Hiệp
+                </button>
+            </div>
+
+            <!-- Big Touch Target Area (Chin / Nose Contact) -->
+            <div id="touch-zone" class="touch-zone">
+                <div class="touch-ring-container">
+                    <svg class="progress-ring" width="300" height="300">
+                        <circle class="progress-ring-bg" cx="150" cy="150" r="130" />
+                        <circle id="workout-progress-ring" class="progress-ring-circle" cx="150" cy="150" r="130" />
+                    </svg>
+                    <div class="rep-display-center">
+                        <span id="rep-count" class="rep-number">0</span>
+                        <span class="rep-unit">LẦN</span>
+                    </div>
+                </div>
+                <div class="touch-instruction">
+                    <div class="instruction-pulse-icon">👇</div>
+                    <p class="instruction-text">Đặt máy dưới ngực hoặc cằm<br><strong>Chạm cằm / mũi vào màn hình để đếm</strong></p>
+                </div>
+            </div>
+
+            <!-- Manual Quick Adjusters (in case of manual correction) -->
+            <div class="workout-footer">
+                <button id="btn-manual-rep-minus" class="btn-adjust">-1</button>
+                <span class="adjust-hint">Chạm tay nếu cần chỉnh</span>
+                <button id="btn-manual-rep-add" class="btn-adjust">+1</button>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 3: REST COUNTDOWN ================= -->
+        <section id="view-rest" class="view hidden rest-view">
+            <div class="rest-header">
+                <h2 class="rest-title">NGHỈ NGƠI PHỤC HỒI</h2>
+                <div id="next-set-notice" class="rest-next-notice">Sắp tới: Hiệp 2 (20 cái)</div>
+            </div>
+
+            <div class="rest-clock-container">
+                <svg class="progress-ring" width="260" height="260">
+                    <circle class="progress-ring-bg" cx="130" cy="130" r="110" />
+                    <circle id="rest-progress-ring" class="progress-ring-circle rest-circle" cx="130" cy="130" r="110" />
+                </svg>
+                <div class="rest-clock-center">
+                    <span id="rest-count" class="rest-seconds">30</span>
+                    <span class="rest-unit">GIÂY</span>
+                </div>
+            </div>
+
+            <div class="rest-actions">
+                <button id="btn-add-15s-rest" class="btn-ghost-pill">+15s Nghỉ</button>
+                <button id="btn-skip-rest" class="btn-primary-pill">Bỏ Qua & Vào Luôn</button>
+            </div>
+        </section>
+
+        <!-- ================= VIEW 4: VICTORY & SUMMARY ================= -->
+        <section id="view-summary" class="view hidden summary-view">
+            <div class="victory-card">
+                <div class="trophy-badge">🏆</div>
+                <h2 id="summary-title" class="victory-title">XUẤT SẮC HOÀN THÀNH!</h2>
+                <p class="victory-sub">Bạn vừa hoàn thành một buổi chống đẩy cực kỳ chất lượng!</p>
+
+                <div class="summary-stats-box">
+                    <div class="summary-stat-col">
+                        <span class="summary-stat-val" id="summary-reps">50</span>
+                        <span class="summary-stat-lbl">Tổng Cái</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-stat-col">
+                        <span class="summary-stat-val" id="summary-time">3m 45s</span>
+                        <span class="summary-stat-lbl">Thời Gian</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-stat-col">
+                        <span class="summary-stat-val" id="summary-calories">19 kcal</span>
+                        <span class="summary-stat-lbl">Tiêu Thụ</span>
+                    </div>
+                </div>
+
+                <div class="summary-button-group">
+                    <button id="btn-view-history-from-summary" class="btn-secondary">
+                        📜 Xem Lịch Sử
+                    </button>
+                    <button id="btn-done-summary" class="btn-primary">
+                        Về Trang Chủ
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= VIEW 5: ROUTINE EDITOR ================= -->
+        <section id="view-routine-editor" class="view hidden editor-view">
+            <div class="editor-header">
+                <h2 id="editor-title" class="editor-title">Tạo Giáo Án Ngày Mới</h2>
+                <p class="editor-sub">Tuỳ chỉnh số hiệp và số cái mục tiêu theo thể lực của bạn</p>
+            </div>
+
+            <div class="editor-form">
+                <div class="form-group">
+                    <label class="form-label">Tên Ngày Tập</label>
+                    <input type="text" id="edit-routine-name" class="form-input" placeholder="Ví dụ: Ngày 1: Ngực & Bắp Tay" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mô Tả / Ghi Chú (Tùy chọn)</label>
+                    <input type="text" id="edit-routine-desc" class="form-input" placeholder="Ví dụ: Nghỉ 30s giữa các set...">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Thời Gian Nghỉ Giữa Các Hiệp (Giây)</label>
+                    <input type="number" id="edit-routine-rest" class="form-input" value="30" min="5" max="300">
+                </div>
+
+                <div class="sets-editor-box">
+                    <div class="sets-editor-header">
+                        <label class="form-label">Danh Sách Các Hiệp (Sets)</label>
+                        <button type="button" id="btn-add-set-in-edit" class="btn-add-set">
+                            + Thêm Hiệp
+                        </button>
+                    </div>
+
+                    <div id="edit-sets-container" class="edit-sets-container">
+                        <!-- Dynamic sets editor rows -->
+                    </div>
+                </div>
+
+                <div class="editor-buttons">
+                    <button type="button" id="btn-cancel-routine-edit" class="btn-secondary">Hủy</button>
+                    <button type="button" id="btn-save-routine" class="btn-primary">Lưu Giáo Án</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal Sửa Lịch Sử Luyện Tập -->
+        <div id="modal-edit-history" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3 class="modal-title">Sửa Lịch Sử Luyện Tập</h3>
+                    <button id="btn-close-edit-history" class="modal-btn-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit-history-id">
+                    <div class="form-group">
+                        <label class="form-label">Tên buổi tập / bài tập</label>
+                        <input type="text" id="edit-history-name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số cái chống đẩy (Reps)</label>
+                        <input type="number" id="edit-history-reps" class="form-input" min="1" max="5000" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ngày giờ tập</label>
+                        <input type="text" id="edit-history-date" class="form-input">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-cancel-edit-history" class="btn-secondary">Hủy</button>
+                    <button id="btn-save-edit-history" class="btn-primary">Lưu Thay Đổi</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Đổi Mục Tiêu Ngày -->
+        <div id="modal-edit-goal" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3 class="modal-title">Đặt Mục Tiêu Chống Đẩy Mỗi Ngày</h3>
+                    <button id="btn-close-edit-goal" class="modal-btn-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Số cái mục tiêu mỗi ngày (Reps)</label>
+                        <input type="number" id="input-daily-goal" class="form-input" min="10" max="5000" value="200" required>
+                        <p class="form-hint">Mặc định: 200 cái/ngày. Thanh tiến độ sẽ tự động tính theo số rep bạn hoàn thành trong ngày.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-cancel-edit-goal" class="btn-secondary">Hủy</button>
+                    <button id="btn-save-edit-goal" class="btn-primary">Lưu Mục Tiêu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Chia Sẻ & Nhập Giáo Án -->
+        <div id="modal-share-routines" class="modal-overlay hidden">
+
+            <div class="modal-card modal-card-wide">
+                <div class="modal-header">
+                    <h3 class="modal-title">Chia Sẻ & Nhập Giáo Án</h3>
+                    <button id="btn-close-share-modal" class="modal-btn-close">&times;</button>
+                </div>
+                
+                <!-- Tab Switching: Xuất / Nhập -->
+                <div class="modal-tabs">
+                    <button id="tab-btn-export" class="modal-tab-btn active">📤 Chia Sẻ (Xuất ra)</button>
+                    <button id="tab-btn-import" class="modal-tab-btn">📥 Nhận (Nhập vào)</button>
+                </div>
+
+                <!-- Tab 1: Xuất giáo án -->
+                <div id="tab-content-export" class="modal-tab-content active">
+                    <div class="modal-body">
+                        <p class="share-guide-text">
+                            Gửi toàn bộ giáo án của bạn sang điện thoại hoặc máy khác bằng các cách dưới đây:
+                        </p>
+                        <div class="share-actions-grid">
+                            <button id="btn-copy-share-link" class="share-action-card">
+                                <div class="share-card-icon">🔗</div>
+                                <div class="share-card-info">
+                                    <strong>Sao Chép Link Nạp Tự Động</strong>
+                                    <span>Gửi link, máy kia mở lên là tự nhận luôn</span>
+                                </div>
+                            </button>
+
+                            <button id="btn-copy-share-code" class="share-action-card">
+                                <div class="share-card-icon">📋</div>
+                                <div class="share-card-info">
+                                    <strong>Sao Chép Mã Giáo Án</strong>
+                                    <span>Gửi qua Zalo/Telegram để máy kia dán vào</span>
+                                </div>
+                            </button>
+
+                            <button id="btn-download-routine-json" class="share-action-card">
+                                <div class="share-card-icon">💾</div>
+                                <div class="share-card-info">
+                                    <strong>Tải Về File (.JSON)</strong>
+                                    <span>Lưu file giáo án dự phòng về máy</span>
+                                </div>
+                            </button>
+                        </div>
+                        <div id="share-copy-toast" class="copy-toast hidden">✓ Đã sao chép vào khay nhớ tạm!</div>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Nhập giáo án -->
+                <div id="tab-content-import" class="modal-tab-content hidden">
+                    <div class="modal-body">
+                        <p class="share-guide-text">
+                            Dán mã chia sẻ nhận được từ máy khác hoặc chọn file <code>.json</code> để nạp vào máy:
+                        </p>
+                        <div class="form-group">
+                            <textarea id="textarea-import-code" class="form-textarea" rows="4" placeholder="Dán mã chia sẻ hoặc link giáo án vào đây..."></textarea>
+                        </div>
+
+                        <div class="import-file-row">
+                            <input type="file" id="file-import-json" accept=".json" class="hidden">
+                            <button type="button" id="btn-trigger-file-import" class="btn-ghost-small">
+                                📁 Hoặc chọn file .JSON từ máy
+                            </button>
+                            <span id="import-file-name" class="import-file-status"></span>
+                        </div>
+
+                        <div class="import-mode-options">
+                            <label class="radio-option">
+                                <input type="radio" name="import-mode" value="replace" checked>
+                                <span>Thay thế hoàn toàn giáo án hiện tại</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="import-mode" value="append">
+                                <span>Thêm tiếp vào sau các ngày hiện có</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="btn-cancel-import" class="btn-secondary">Hủy</button>
+                        <button id="btn-confirm-import" class="btn-primary">Áp Dụng Giáo Án</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+    <!-- Scripts -->
+    <script src="audio.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Register Service Worker for offline PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => {
+                    console.log('SW registration note:', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Android build outputs & local config
+android/.gradle/
+android/app/build/
+android/build/
+android/local.properties
+android/*.iml
+android/app/*.iml
+
+# System files
+.DS_Store
+Thumbs.db
+*.log
