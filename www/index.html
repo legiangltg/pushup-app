@@ -24,7 +24,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <!-- App Styles -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
     <div id="app-container">
@@ -487,13 +487,26 @@
 
 
     <!-- Scripts -->
-    <script src="audio.js"></script>
-    <script src="app.js"></script>
+    <script src="audio.js?v=2"></script>
+    <script src="app.js?v=2"></script>
     <script>
-        // Register Service Worker for offline PWA
+        // Register Service Worker for offline PWA with automatic update detection
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js').catch(err => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    // Check for updates
+                    reg.update();
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        if (installingWorker) {
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    window.location.reload();
+                                }
+                            };
+                        }
+                    };
+                }).catch(err => {
                     console.log('SW registration note:', err);
                 });
             });
