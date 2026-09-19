@@ -1,0 +1,19 @@
+{
+  "name": "PushUp Pro - Đếm Chống Đẩy & Giáo Án",
+  "short_name": "PushUp Pro",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090D16",
+  "theme_color": "#0F172A",
+  "description": "Ứng dụng đếm chống đẩy bằng chạm cằm/mũi và quản lý giáo án bài tập theo ngày và hiệp cho Android",
+  "categories": ["fitness", "health", "sports"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
